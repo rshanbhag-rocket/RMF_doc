@@ -29,11 +29,20 @@ import (
 type Request struct {
 	Resource  string
 	TimeRange data.TimeRange
+	Batched   bool
+	Span      time.Duration
 }
 
 func NewRequest(res string, from time.Time, to time.Time, step time.Duration) *Request {
-	q := Request{Resource: res, TimeRange: data.TimeRange{From: from, To: to}}
+	q := Request{Resource: res, TimeRange: data.TimeRange{From: from, To: to}, Batched: false}
 	q.Align(step)
+	return &q
+}
+
+func NewBatchRequest(res string, t time.Time, step time.Duration, span time.Duration) *Request {
+	startHour := t.Truncate(step)
+	endHour := startHour.Add(step)
+	q := Request{Resource: res, TimeRange: data.TimeRange{From: startHour, To: endHour}, Batched: true, Span: span}
 	return &q
 }
 
@@ -76,6 +85,13 @@ func (r *Request) pathWithParams(timeOfs time.Duration) (string, []string, error
 	if path == "" {
 		path = PerformPath
 	}
-	params = append(params, "range", r.formatRange(timeOfs))
+	var rangeParam string = "range"
+	if r.Batched {
+		params = append(params, "batchSpan", fmt.Sprintf("%d", int(r.Span.Seconds())))
+		path = TimeSeriesPath
+		timeOfs = 0
+		rangeParam = "rangeUtc"
+	}
+	params = append(params, rangeParam, r.formatRange(timeOfs))
 	return path, params, nil
 }

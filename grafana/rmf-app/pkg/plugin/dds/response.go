@@ -47,8 +47,41 @@ var AcceptableMessages = map[string]bool{
 	"GPM0709I": true, // Filter has caused no data to be returned
 }
 
+const MESSAGE_ID_NOT_ENOUGTH_MEMORY = "GPM0555I"
+const MESSAGE_SEVERITY_WARNING = 2
+
 type Response struct {
-	Reports []Report `json:"report"`
+	Reports    []Report    `json:"report"`
+	Server     Server      `json:"server"`
+	TimeSeries *TimeSeries `json:"timeSeries"`
+}
+
+type Server struct {
+	Functionality string `json:"functionality"`
+	Version       string `json:"version"`
+}
+
+type TimeSeries struct {
+	Metric   *Metric
+	Message  *Message
+	Resource *Resource `json:"resource"`
+	Series   []Series  `json:"series"`
+}
+
+type Series struct {
+	TimeData *TimeData
+	Message  *Message
+	Rows     []Row `json:"row"`
+}
+
+type GpmError struct {
+	Id          string
+	Severity    int
+	Description string
+}
+
+func (e *GpmError) Error() string {
+	return fmt.Sprintf("DDS error: %s (severity %d). %s", e.Id, e.Severity, e.Description)
 }
 
 type Report struct {
