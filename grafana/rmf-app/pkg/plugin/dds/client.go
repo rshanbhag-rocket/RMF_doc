@@ -271,8 +271,12 @@ func (c *Client) updateMetadata() *TimeData {
 		c.timeData = timeData
 		c.resource = resource
 		c.systems = systems
-		fl, _ := strconv.Atoi(response.Server.Functionality)
-		c.functionality.Store(int32(fl))
+		fl, parseErr := strconv.ParseInt(response.Server.Functionality, 10, 32)
+		if parseErr != nil {
+			logger.Warn("unable to parse DDS functionality", "value", response.Server.Functionality, "error", parseErr)
+		} else {
+			c.functionality.Store(int32(fl))
+		}
 		c.rwMutex.Unlock()
 		logger.Debug("DDS time data updated")
 		return timeData, nil

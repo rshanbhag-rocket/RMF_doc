@@ -30,7 +30,7 @@ const DefaultHttpTimeout = 60
 const DefaultCacheSizeMB = 1024
 const MinimalCacheSizeMB = 128
 const MinBatchRequestMinutes = 10
-const MaxBatchRequestMinutes = 180
+const MaxBatchRequestMinutes = 120
 const DefaultBatchRequestMinutes = MaxBatchRequestMinutes
 
 type Config struct {
@@ -47,7 +47,7 @@ type Config struct {
 		DisableCompression bool   `json:"disableCompression"`
 		// Custom RMF settings.
 		CacheSizeRaw string `json:"cacheSize"`
-		// Legacy custom RMF settings. We should ge rid of these at some point.
+		// Legacy custom RMF settings. We should get rid of these at some point.
 		Server               *string `json:"path"`
 		Port                 string  `json:"port"`
 		SSL                  bool    `json:"ssl"`
