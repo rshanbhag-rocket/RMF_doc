@@ -20,6 +20,7 @@ package dds
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -85,9 +86,9 @@ func (r *Request) pathWithParams(timeOfs time.Duration) (string, []string, error
 	if path == "" {
 		path = PerformPath
 	}
-	var rangeParam string = "range"
+	var rangeParam = "range"
 	if r.Batched {
-		params = append(params, "batchSpan", fmt.Sprintf("%d", int(r.Span.Seconds())))
+		params = append(params, "batchSpan", strconv.Itoa(int(r.Span.Seconds())))
 		path = TimeSeriesPath
 		timeOfs = 0
 		rangeParam = "rangeUtc"
