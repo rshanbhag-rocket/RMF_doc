@@ -69,7 +69,7 @@ type TimeSeries struct {
 }
 
 type Series struct {
-	TimeData *TimeData
+	TimeData *TimeDataShort `json:"timeData"`
 	Message  *Message
 	Rows     []Row `json:"row"`
 }
@@ -106,14 +106,18 @@ func (r Report) GetRowNames() []string {
 	return names
 }
 
-type TimeData struct {
-	// FIXME: don't use these in report headers: they are in DDS timezone. Remove from the mapping.
+type TimeDataShort struct {
 	LocalStart DateTime `json:"localStart"`
 	LocalEnd   DateTime `json:"localEnd"`
-	LocalPrev  DateTime `json:"localPrev"`
-	LocalNext  DateTime `json:"localNext"`
 	UTCStart   DateTime `json:"utcStart"`
 	UTCEnd     DateTime `json:"utcEnd"`
+}
+
+type TimeData struct {
+	// FIXME: don't use these in report headers: they are in DDS timezone. Remove from the mapping.
+	TimeDataShort
+	LocalPrev  DateTime `json:"localPrev"`
+	LocalNext  DateTime `json:"localNext"`
 	NumSamples int      `json:"numSamples"`
 	NumSystems *int     `json:"numSystems,omitempty"`
 	MinTime    struct {

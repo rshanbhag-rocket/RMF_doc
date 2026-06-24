@@ -91,7 +91,7 @@ func Build(ddsResponse *dds.Response, headers *dds.HeaderMap, wide bool) (*data.
 	if format == dds.ReportFormat {
 		return buildForReport(&report, headers, frameName), nil
 	} else if wide {
-		return buildWideForMetric(report.Metric, report.TimeData, &report.Rows, frameName), nil
+		return buildWideForMetric(report.Metric, &report.TimeData.TimeDataShort, &report.Rows, frameName), nil
 	} else {
 		return buildLongForMetric(&report, frameName), nil
 	}
@@ -138,7 +138,7 @@ func BuildBatch(ddsResponse *dds.Response) (*data.Frame, error) {
 
 // buildWideForMetric creates a time series data frame for a metric from pre-parsed DDS response.
 // Grafana frame format: wide.
-func buildWideForMetric(metric *dds.Metric, timeData *dds.TimeData, rows *[]dds.Row, frameName string) *data.Frame {
+func buildWideForMetric(metric *dds.Metric, timeData *dds.TimeDataShort, rows *[]dds.Row, frameName string) *data.Frame {
 	timestamp := timeData.UTCEnd.Time
 	metricFormat := metric.Format
 	labels := getFrameLabels(metricFormat, frameName)
